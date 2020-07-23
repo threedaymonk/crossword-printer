@@ -7,5 +7,12 @@
     "test": "jest"
   },
   "author": "Paul Battley",
-  "license": "ISC"
+  "license": "ISC",
+  "prettier": {
+    "trailingComma": "none",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": false,
+    "quoteProps": "consistent"
+  }
 }
