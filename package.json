@@ -8,6 +8,10 @@
   },
   "author": "Paul Battley",
   "license": "ISC",
+  "dependencies": {
+    "libxmljs": "^0.19.7"
+  },
+  "devDependencies": {},
   "prettier": {
     "trailingComma": "none",
     "tabWidth": 2,
