@@ -21,15 +21,15 @@ const parseXml = (xml) => {
   const clues = extractClues(crossword);
   const cells = extractCells(grid);
   return {
-    cells: cells,
-    clues: clues
+    ...cells,
+    ...clues
   };
 };
 
 const extractCells = (grid) => {
   const width = parseInt(grid.attr("width").value(), 10);
   const height = parseInt(grid.attr("height").value(), 10);
-  return _.range(height).map((y) => {
+  const cells = _.range(height).map((y) => {
     return _.range(width).map((x) => {
       const cell = grid.get(`p:cell[@x=${x + 1} and @y=${y + 1}]`, NAMESPACES);
       let result = {};
@@ -47,18 +47,26 @@ const extractCells = (grid) => {
       return result;
     });
   });
+  return {
+    width: width,
+    height: height,
+    cells: cells
+  };
 };
 
 const extractClues = (crossword) => {
-  return crossword.find("p:clues", NAMESPACES).reduce((result, clues) => {
-    const words = clues.find("p:clue", NAMESPACES).reduce((words, clue) => {
-      const number = parseInt(clue.attr("number").value(), 10);
-      const text = `${clue.text().trim()} (${clue.attr("format").value()})`;
-      return { ...words, [number]: text };
+  const result = crossword
+    .find("p:clues", NAMESPACES)
+    .reduce((result, clues) => {
+      const words = clues.find("p:clue", NAMESPACES).reduce((words, clue) => {
+        const number = parseInt(clue.attr("number").value(), 10);
+        const text = `${clue.text().trim()} (${clue.attr("format").value()})`;
+        return { ...words, [number]: text };
+      }, {});
+      const title = clues.get("p:title", NAMESPACES).text().trim();
+      return { ...result, [title]: words };
     }, {});
-    const title = clues.get("p:title", NAMESPACES).text().trim();
-    return { ...result, [title]: words };
-  }, {});
+  return { clues: result };
 };
 
 main();
