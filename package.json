@@ -9,7 +9,9 @@
   "author": "Paul Battley",
   "license": "ISC",
   "dependencies": {
-    "libxmljs": "^0.19.7"
+    "libxmljs": "^0.19.7",
+    "lodash": "^4.17.19",
+    "prettier": "^2.0.5"
   },
   "devDependencies": {},
   "prettier": {
