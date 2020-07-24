@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "Render crossword compiler XML",
   "main": "index.js",
-  "scripts": {
-    "test": "jest"
-  },
   "author": "Paul Battley",
   "license": "ISC",
   "dependencies": {
