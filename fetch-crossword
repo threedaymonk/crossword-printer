@@ -52,17 +52,25 @@ const main = async () => {
   let date = program.from;
   while (date <= program.to) {
     const destPath = filename(date);
-    const xml = await download(downloadUrl(date));
-    const crossword = { ...parseCrosswordXml(xml), title: title(date) };
-    const tex = renderCrosswordToTex(crossword);
-    const output = createWriteStream(destPath);
-    const pdf = latex(tex, LATEX_OPTIONS);
-    pdf.on("error", (err) => {
-      console.error(err);
-      process.exit(1);
-    });
-    pdf.on("finish", () => console.log(`Generated ${destPath}`));
-    pdf.pipe(output);
+    try {
+      const xml = await download(downloadUrl(date));
+      const crossword = { ...parseCrosswordXml(xml), title: title(date) };
+      const tex = renderCrosswordToTex(crossword);
+      const output = createWriteStream(destPath);
+      const pdf = latex(tex, LATEX_OPTIONS);
+      pdf.on("error", (err) => {
+        console.error(err);
+        process.exit(1);
+      });
+      pdf.on("finish", () => console.log(`Generated ${destPath}`));
+      pdf.pipe(output);
+    } catch (err) {
+      if (err.name == "HTTPError") {
+        console.log(`No crossword available for ${date}`);
+      } else {
+        throw err;
+      }
+    }
     date = date.plusDays(1);
   }
 };
