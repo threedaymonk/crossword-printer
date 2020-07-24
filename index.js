@@ -2,10 +2,18 @@ const libxmljs = require("libxmljs");
 const fs = require("fs");
 const _ = require("lodash");
 const { stripIndents } = require("common-tags");
+const lescape = require("escape-latex");
 
 const NAMESPACES = {
   c: "http://crossword.info/xml/crossword-compiler",
   p: "http://crossword.info/xml/rectangular-puzzle"
+};
+
+const $l = (strings, ...substitutions) => {
+  const escaped = substitutions.map(lescape);
+  return strings.reduce((buf, str, i) => {
+    return buf + str + (escaped[i] || "");
+  }, "");
 };
 
 const main = () => {
@@ -73,7 +81,7 @@ const extractClues = (crossword) => {
 };
 
 const generatePuzzle = (crossword) => {
-  let output = `\\begin{Puzzle}{${crossword.width}}{${crossword.height}}%\n`;
+  let output = $l`\\begin{Puzzle}{${crossword.width}}{${crossword.height}}%\n`;
   crossword.cells.forEach((row) => {
     row.forEach((cell) => {
       let buf = "|";
@@ -94,11 +102,11 @@ const generatePuzzle = (crossword) => {
 const generateClues = (crossword) => {
   let output = "";
   crossword.clues.forEach(([dir, clues]) => {
-    output += `\\section*{${dir}}\n\n\\begin{itemize}\n`;
+    output += $l`\\section*{${dir}}\n\n\\begin{itemize}\n`;
     clues.forEach(([number, clue, format]) => {
-      output += `\\item [${number}] ${clue} (${format})\n\n`;
+      output += $l`\\item [${number}] ${clue} (${format})\n`;
     });
-    output += `\\end{itemize}\n`;
+    output += `\\end{itemize}\n\n`;
   });
   return output;
 };
