@@ -27,10 +27,10 @@ const $l = (strings, ...substitutions) => {
 };
 
 const main = () => {
-  for (const path of process.argv.slice(2)) {
-    const xml = readFileSync(path);
+  for (const srcPath of process.argv.slice(2)) {
+    const xml = readFileSync(srcPath);
     const crossword = parseCrosswordXml(xml);
-    const tex = generateTex(crossword);
+    const tex = renderDocument(crossword);
     console.log(tex);
     const output = createWriteStream("output.pdf");
     const pdf = latex(tex, LATEX_OPTIONS);
@@ -45,33 +45,36 @@ const main = () => {
 
 const parseCrosswordXml = (xml) => {
   const doc = parseXml(xml);
-  const crossword = doc.get("//p:crossword", NAMESPACES);
-  const grid = crossword.get("p:grid", NAMESPACES);
-  const clues = extractClues(crossword);
-  const cells = extractCells(grid);
+  const pCrossword = doc.get("//p:crossword", NAMESPACES);
+  const pGrid = pCrossword.get("p:grid", NAMESPACES);
+  const clues = parseClues(pCrossword);
+  const grid = parseGrid(pGrid);
   return {
-    ...cells,
+    ...grid,
     ...clues
   };
 };
 
-const extractCells = (grid) => {
-  const width = parseInt(grid.attr("width").value(), 10);
-  const height = parseInt(grid.attr("height").value(), 10);
-  const cells = range(height).map((y) => {
+const parseGrid = (pGrid) => {
+  const width = parseInt(pGrid.attr("width").value(), 10);
+  const height = parseInt(pGrid.attr("height").value(), 10);
+  const grid = range(height).map((y) => {
     return range(width).map((x) => {
-      const cell = grid.get(`p:cell[@x=${x + 1} and @y=${y + 1}]`, NAMESPACES);
+      const pCell = pGrid.get(
+        `p:cell[@x=${x + 1} and @y=${y + 1}]`,
+        NAMESPACES
+      );
       let result = {};
-      if (cell.attr("type")) {
-        result.type = cell.attr("type").value();
+      if (pCell.attr("type")) {
+        result.type = pCell.attr("type").value();
       } else {
         result.type = "letter";
       }
-      if (cell.attr("number")) {
-        result.number = parseInt(cell.attr("number").value(), 10);
+      if (pCell.attr("number")) {
+        result.number = parseInt(pCell.attr("number").value(), 10);
       }
-      if (cell.attr("solution")) {
-        result.solution = cell.attr("solution").value();
+      if (pCell.attr("solution")) {
+        result.solution = pCell.attr("solution").value();
       }
       return result;
     });
@@ -79,29 +82,29 @@ const extractCells = (grid) => {
   return {
     width: width,
     height: height,
-    cells: cells
+    grid: grid
   };
 };
 
-const extractClues = (crossword) => {
+const parseClues = (crossword) => {
   const result = crossword
     .find("p:clues", NAMESPACES)
-    .reduce((result, clues) => {
-      const words = clues.find("p:clue", NAMESPACES).reduce((words, clue) => {
-        const number = parseInt(clue.attr("number").value(), 10);
-        const text = clue.text().trim();
-        const format = clue.attr("format").value();
-        return [...words, [number, text, format]];
+    .reduce((result, pClues) => {
+      const clues = pClues.find("p:clue", NAMESPACES).reduce((words, pClue) => {
+        const number = parseInt(pClue.attr("number").value(), 10);
+        const clue = pClue.text().trim();
+        const format = pClue.attr("format").value();
+        return [...words, [number, clue, format]];
       }, []);
-      const title = clues.get("p:title", NAMESPACES).text().trim();
-      return [...result, [title, words]];
+      const title = pClues.get("p:title", NAMESPACES).text().trim();
+      return [...result, [title, clues]];
     }, []);
   return { clues: result };
 };
 
-const generatePuzzle = (crossword) => {
+const renderGrid = (crossword) => {
   let output = $l`\\begin{Puzzle}{${crossword.width}}{${crossword.height}}%\n`;
-  crossword.cells.forEach((row) => {
+  crossword.grid.forEach((row) => {
     row.forEach((cell) => {
       let buf = "|";
       if (cell.type == "letter") {
@@ -118,7 +121,7 @@ const generatePuzzle = (crossword) => {
   return output;
 };
 
-const generateClues = (crossword) => {
+const renderClueList = (crossword) => {
   let output = "";
   output += "\\begin{multicols}{4}\n";
   crossword.clues.forEach(([dir, clues]) => {
@@ -137,7 +140,7 @@ const cellSize = (crossword) => {
   Math.min(DEFAULT_CELL_SIZE, MAX_GRID_HEIGHT / crossword.height);
 };
 
-const generateTex = (crossword) => {
+const renderDocument = (crossword) => {
   return stripIndents`
     \\documentclass{crossword}
     \\begin{document}
@@ -145,9 +148,9 @@ const generateTex = (crossword) => {
     \\maketitle
     \\renewcommand\\PuzzleUnitlength{${14 / crossword.width}cm}
 
-    ${generatePuzzle(crossword)}
+    ${renderGrid(crossword)}
 
-    ${generateClues(crossword)}
+    ${renderClueList(crossword)}
 
     \\end{document}
   `;
