@@ -1,6 +1,6 @@
-const libxmljs = require("libxmljs");
-const fs = require("fs");
-const _ = require("lodash");
+const { parseXml } = require("libxmljs");
+const { readFileSync } = require("fs");
+const { range } = require("lodash");
 const { stripIndents } = require("common-tags");
 const lescape = require("escape-latex");
 
@@ -18,14 +18,14 @@ const $l = (strings, ...substitutions) => {
 
 const main = () => {
   for (const path of process.argv.slice(2)) {
-    const xml = fs.readFileSync(path);
-    const crossword = parseXml(xml);
+    const xml = readFileSync(path);
+    const crossword = parseCrosswordXml(xml);
     console.log(generateTex(crossword));
   }
 };
 
-const parseXml = (xml) => {
-  const doc = libxmljs.parseXml(xml);
+const parseCrosswordXml = (xml) => {
+  const doc = parseXml(xml);
   const crossword = doc.get("//p:crossword", NAMESPACES);
   const grid = crossword.get("p:grid", NAMESPACES);
   const clues = extractClues(crossword);
@@ -39,8 +39,8 @@ const parseXml = (xml) => {
 const extractCells = (grid) => {
   const width = parseInt(grid.attr("width").value(), 10);
   const height = parseInt(grid.attr("height").value(), 10);
-  const cells = _.range(height).map((y) => {
-    return _.range(width).map((x) => {
+  const cells = range(height).map((y) => {
+    return range(width).map((x) => {
       const cell = grid.get(`p:cell[@x=${x + 1} and @y=${y + 1}]`, NAMESPACES);
       let result = {};
       if (cell.attr("type")) {
