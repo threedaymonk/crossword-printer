@@ -24,7 +24,7 @@
 \linespread{1.0}
 
 % Leave less spacing around section titles (Across and Down)
-\titlespacing*{\section}{0pt}{8pt}{8pt}
+\titlespacing*{\section}{0em}{.5em}{.5em}
 
 % Allocate less space for the puzzle number - we only use 2 digits
 \setdefaultleftmargin{1.5em}{}{}{}{.5em}{.5em}
