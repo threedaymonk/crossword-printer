@@ -11,18 +11,17 @@ const LATEX_OPTIONS = {
   inputs: "."
 };
 
-for (const srcPath of process.argv.slice(2)) {
+process.argv.slice(2).forEach((srcPath) => {
   const destPath = srcPath.replace(/\.xml$/i, ".pdf");
   const xml = readFileSync(srcPath);
   const crossword = parseCrosswordXml(xml);
   const tex = renderCrosswordToTex(crossword);
-  console.log(tex);
   const output = createWriteStream(destPath);
   const pdf = latex(tex, LATEX_OPTIONS);
   pdf.on("error", (err) => {
     console.error(err);
     process.exit(1);
   });
-  pdf.on("finish", () => console.log("PDF generated!"));
+  pdf.on("finish", () => console.log(`Generated ${destPath}`));
   pdf.pipe(output);
-}
+});
