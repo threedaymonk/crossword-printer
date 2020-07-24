@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { createWriteStream, readFileSync } = require("fs");
 const parseCrosswordXml = require("./lib/parser");
 const renderCrosswordToTex = require("./lib/renderer");
