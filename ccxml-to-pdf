@@ -12,11 +12,12 @@ const LATEX_OPTIONS = {
 };
 
 for (const srcPath of process.argv.slice(2)) {
+  const destPath = srcPath.replace(/\.xml$/i, ".pdf");
   const xml = readFileSync(srcPath);
   const crossword = parseCrosswordXml(xml);
   const tex = renderCrosswordToTex(crossword);
   console.log(tex);
-  const output = createWriteStream("output.pdf");
+  const output = createWriteStream(destPath);
   const pdf = latex(tex, LATEX_OPTIONS);
   pdf.on("error", (err) => {
     console.error(err);
