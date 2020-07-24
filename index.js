@@ -1,13 +1,23 @@
 const { parseXml } = require("libxmljs");
-const { readFileSync } = require("fs");
+const { createWriteStream, readFileSync } = require("fs");
 const { range } = require("lodash");
 const { stripIndents } = require("common-tags");
 const lescape = require("escape-latex");
+const latex = require("node-latex");
 
 const NAMESPACES = {
   c: "http://crossword.info/xml/crossword-compiler",
   p: "http://crossword.info/xml/rectangular-puzzle"
 };
+
+const LATEX_OPTIONS = {
+  cmd: "xelatex",
+  errorLogs: "errors.log",
+  inputs: "."
+};
+
+const MAX_GRID_HEIGHT = 14; // cm
+const DEFAULT_CELL_SIZE = 1; // cm
 
 const $l = (strings, ...substitutions) => {
   const escaped = substitutions.map(lescape);
@@ -20,7 +30,16 @@ const main = () => {
   for (const path of process.argv.slice(2)) {
     const xml = readFileSync(path);
     const crossword = parseCrosswordXml(xml);
-    console.log(generateTex(crossword));
+    const tex = generateTex(crossword);
+    console.log(tex);
+    const output = createWriteStream("output.pdf");
+    const pdf = latex(tex, LATEX_OPTIONS);
+    pdf.on("error", (err) => {
+      console.error(err);
+      process.exit(1);
+    });
+    pdf.on("finish", () => console.log("PDF generated!"));
+    pdf.pipe(output);
   }
 };
 
@@ -101,25 +120,30 @@ const generatePuzzle = (crossword) => {
 
 const generateClues = (crossword) => {
   let output = "";
+  output += "\\begin{multicols}{4}\n";
   crossword.clues.forEach(([dir, clues]) => {
-    output += $l`\\section*{${dir}}\n\n\\begin{itemize}\n`;
+    output += $l`\\section*{${dir}}\n\n`;
+    output += "\\begin{compactitem}\n";
     clues.forEach(([number, clue, format]) => {
-      output += $l`\\item [${number}] ${clue} (${format})\n`;
+      output += $l`\\item[${number}]{${clue} (${format})}\n`;
     });
-    output += `\\end{itemize}\n\n`;
+    output += `\\end{compactitem}\n`;
   });
+  output += "\\end{multicols}\n";
   return output;
+};
+
+const cellSize = (crossword) => {
+  Math.min(DEFAULT_CELL_SIZE, MAX_GRID_HEIGHT / crossword.height);
 };
 
 const generateTex = (crossword) => {
   return stripIndents`
-    \\documentclass{article}
-    \\usepackage{fontspec}
-    \\usepackage{xunicode}
-    \\setmainfont{Lato}
-    \\usepackage[margin=1in]{geometry}
-    \\usepackage[large]{cwpuzzle}
+    \\documentclass{crossword}
     \\begin{document}
+    \\title{Crossword}
+    \\maketitle
+    \\renewcommand\\PuzzleUnitlength{${14 / crossword.width}cm}
 
     ${generatePuzzle(crossword)}
 
