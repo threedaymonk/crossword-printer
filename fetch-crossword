@@ -10,6 +10,8 @@ const { Locale } = require("@js-joda/locale_en");
 const {} = require("@js-joda/timezone");
 const { oneLineTrim } = require("common-tags");
 const download = require("download");
+const printer = require("pdf-to-printer");
+const fs = require("fs");
 
 const LATEX_OPTIONS = {
   cmd: "xelatex",
@@ -45,7 +47,8 @@ const main = async () => {
 
   program
     .option("-f, --from <YYYY-MM-DD>", "download start date", parseDate, today)
-    .option("-t, --to <YYYY-MM-DD>", "download end date", parseDate, today);
+    .option("-t, --to <YYYY-MM-DD>", "download end date", parseDate, today)
+    .option("-p, --print", "print crossword");
 
   program.parse(process.argv);
 
@@ -62,7 +65,15 @@ const main = async () => {
         console.error(err);
         process.exit(1);
       });
-      pdf.on("finish", () => console.log(`Generated ${destPath}`));
+      pdf.on("finish", async () => {
+        if (program.print) {
+          await printer.print(destPath);
+          fs.unlinkSync(destPath);
+          console.log(`Printed ${destPath}`);
+        } else {
+          console.log(`Generated ${destPath}`);
+        }
+      });
       pdf.pipe(output);
     } catch (err) {
       if (err.name == "HTTPError") {

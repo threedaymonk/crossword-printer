@@ -17,6 +17,7 @@
     "libxmljs": "^0.19.7",
     "lodash": "^4.17.19",
     "node-latex": "^3.0.0",
+    "pdf-to-printer": "^1.4.1",
     "prettier": "^2.0.5"
   },
   "devDependencies": {},
