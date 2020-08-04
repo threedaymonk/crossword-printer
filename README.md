@@ -13,6 +13,10 @@ This is:
   cryptic crossword and render it to a PDF. With the `-p` flag, it will print it
   directly to the default printer.
 
+## Installation
+
+    npm install -g threedaymonk/crossword-printer
+
 ## Why?
 
 We used to pick up the free paper every evening and do the cryptic crossword
