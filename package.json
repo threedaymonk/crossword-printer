@@ -5,6 +5,10 @@
   "main": "index.js",
   "author": "Paul Battley",
   "license": "ISC",
+  "bin": {
+    "ccxml-to-pdf": "./ccxml-to-pdf.js",
+    "fetch-crossword": "./fetch-crossword.js"
+  },
   "dependencies": {
     "@js-joda/core": "^3.0.0",
     "@js-joda/locale_en": "^3.1.1",

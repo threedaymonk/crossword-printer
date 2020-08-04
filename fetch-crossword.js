@@ -16,7 +16,7 @@ const fs = require("fs");
 const LATEX_OPTIONS = {
   cmd: "xelatex",
   errorLogs: "errors.log",
-  inputs: "."
+  inputs: __dirname
 };
 
 const downloadUrl = (date) => {

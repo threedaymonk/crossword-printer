@@ -8,7 +8,7 @@ const latex = require("node-latex");
 const LATEX_OPTIONS = {
   cmd: "xelatex",
   errorLogs: "errors.log",
-  inputs: "."
+  inputs: __dirname
 };
 
 process.argv.slice(2).forEach((srcPath) => {
