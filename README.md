@@ -9,8 +9,9 @@ This is:
 ## Tools
 
 - `ccxml-to-pdf` will take a list of XML files and render them as PDFs.
-- `fetch-crossword` will fetch the XML for today's (or a range of dates')
-  Evening Standard cryptic crossword and render it to a PDF.
+- `fetch-crossword` will fetch today's (or a range of dates') Evening Standard
+  cryptic crossword and render it to a PDF. With the `-p` flag, it will print it
+  directly to the default printer.
 
 ## Why?
 
