@@ -17,6 +17,10 @@ This is:
 
     npm install -g threedaymonk/crossword-printer
 
+You'll also need a working LaTeX installation including XeTeX and the crossword
+package; installing [TeX Live](http://tug.org/texlive/) for your operating
+system will probably be enough.
+
 ## Why?
 
 We used to pick up the free paper every evening and do the cryptic crossword
