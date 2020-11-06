@@ -48,9 +48,20 @@ const main = async () => {
   program
     .option("-f, --from <YYYY-MM-DD>", "download start date", parseDate, today)
     .option("-t, --to <YYYY-MM-DD>", "download end date", parseDate, today)
+    .option(
+      "-d, --date <YYYY-MM-DD>",
+      "download for a specific date",
+      parseDate,
+      today
+    )
     .option("-p, --print", "print crossword");
 
   program.parse(process.argv);
+
+  if (program.date) {
+    program.from = program.date;
+    program.to = program.date;
+  }
 
   let date = program.from;
   while (date <= program.to) {
