@@ -8,7 +8,7 @@ const { Command } = require("commander");
 const { DateTimeFormatter, LocalDate } = require("@js-joda/core");
 const { Locale } = require("@js-joda/locale_en");
 const {} = require("@js-joda/timezone");
-const { oneLineTrim } = require("common-tags");
+const { oneLineTrim, stripIndent } = require("common-tags");
 const download = require("download");
 const printer = require("pdf-to-printer");
 const fs = require("fs");
@@ -39,22 +39,38 @@ const title = (date) => {
   return `Evening Standard Cryptic Crossword for ${formatted}`;
 };
 
+const parseDate = (str) => {
+  if (str.match(/^y(esterday)?$/))
+    return LocalDate.now().minusDays(1);
+  if (str.match(/^t(oday)?$/))
+    return LocalDate.now();
+  if (str.match(/^-?\d+$/))
+    return LocalDate.now().plusDays(parseInt(str, 10));
+  return LocalDate.parse(str);
+};
+
 const main = async () => {
-  const today = LocalDate.now();
   const program = new Command();
 
-  const parseDate = (str) => LocalDate.parse(str);
-
   program
-    .option("-f, --from <YYYY-MM-DD>", "download start date", parseDate, today)
-    .option("-t, --to <YYYY-MM-DD>", "download end date", parseDate, today)
+    .option("-f, --from <DATE>", "download start date", parseDate, "today")
+    .option("-t, --to <DATE>", "download end date", parseDate, "today")
     .option(
-      "-d, --date <YYYY-MM-DD>",
-      "download for a specific date",
-      parseDate,
-      today
+      "-d, --date <DATE>",
+      "download one day only",
+      parseDate
     )
     .option("-p, --print", "print crossword");
+  program.on('--help', () => {
+    console.log("");
+    console.log(stripIndent`
+      Date formats:
+        - ISO 8601 date: 2020-12-25
+        - relative date: -2 (= 2 days ago)
+        - yesterday (or y)
+        - today (or t)
+    `);
+  });
 
   program.parse(process.argv);
 
