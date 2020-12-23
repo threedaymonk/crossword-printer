@@ -53,13 +53,9 @@ const main = async () => {
   const program = new Command();
 
   program
-    .option("-f, --from <DATE>", "download start date", parseDate, "today")
-    .option("-t, --to <DATE>", "download end date", parseDate, "today")
-    .option(
-      "-d, --date <DATE>",
-      "download one day only",
-      parseDate
-    )
+    .option("-f, --from <DATE>", "download start date", "today")
+    .option("-t, --to <DATE>", "download end date", "today")
+    .option("-d, --date <DATE>", "download one day only")
     .option("-p, --print", "print crossword");
   program.on('--help', () => {
     console.log("");
@@ -74,13 +70,11 @@ const main = async () => {
 
   program.parse(process.argv);
 
-  if (program.date) {
-    program.from = program.date;
-    program.to = program.date;
-  }
+  const startDate = parseDate(program.date || program.from);
+  const endDate = parseDate(program.date || program.to);
 
-  let date = program.from;
-  while (date <= program.to) {
+  let date = startDate;
+  while (date <= endDate) {
     const destPath = filename(date);
     try {
       const xml = await download(downloadUrl(date));
