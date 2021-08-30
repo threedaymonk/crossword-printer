@@ -13,7 +13,7 @@
     "@js-joda/core": "^3.0.0",
     "@js-joda/locale_en": "^3.1.1",
     "@js-joda/timezone": "^2.3.0",
-    "commander": "^6.0.0",
+    "commander": "^8.1.0",
     "common-tags": "^1.8.0",
     "download": "^8.0.0",
     "escape-latex": "^1.2.0",
@@ -21,7 +21,7 @@
     "libxmljs": "^0.19.7",
     "lodash": "^4.17.19",
     "node-latex": "^3.0.0",
-    "pdf-to-printer": "^1.4.1",
+    "pdf-to-printer": "^2.0.6",
     "prettier": "^2.0.5"
   },
   "devDependencies": {},

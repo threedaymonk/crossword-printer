@@ -53,9 +53,10 @@ const main = async () => {
 
   program.parse(process.argv);
 
-  const startDate = parseDate(program.date || program.from);
-  const endDate = parseDate(program.date || program.to);
-  const nick = program.source;
+  const options = program.opts();
+  const startDate = parseDate(options.date || options.from);
+  const endDate = parseDate(options.date || options.to);
+  const nick = options.source;
   const source = sources[nick];
 
   if (!source) {
@@ -77,7 +78,7 @@ const main = async () => {
         process.exit(1);
       });
       pdf.on("finish", async () => {
-        if (program.print) {
+        if (options.print) {
           await printer.print(destPath);
           fs.unlinkSync(destPath);
           console.log(`Printed ${destPath}`);
