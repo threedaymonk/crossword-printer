@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { createWriteStream, readFileSync } = require("fs");
-const parseCrosswordXml = require("./lib/parser");
+const parseCrosswordXml = require("./lib/crossword-xml-parser");
 const renderCrosswordToTex = require("./lib/renderer");
 const latex = require("node-latex");
 
