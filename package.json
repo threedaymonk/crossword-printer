@@ -17,7 +17,6 @@
     "common-tags": "^1.8.0",
     "download": "^8.0.0",
     "escape-latex": "^1.2.0",
-    "js-joda": "^1.11.0",
     "libxmljs": "^0.19.7",
     "lodash": "^4.17.19",
     "node-latex": "^3.0.0",
