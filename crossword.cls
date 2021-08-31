@@ -14,8 +14,10 @@
 % Redefine maketitle to print just the title
 \def\@maketitle{%
   \newpage
-  {\noindent \LARGE \textbf \@title \par}%
-  \vskip 1.5em}
+  \noindent\LARGE\textbf\@title\par
+  \noindent\@author\par
+  \vskip 1.5em
+  }
 
 % Set document font
 \setmainfont{Lato}
