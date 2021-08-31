@@ -19,6 +19,8 @@
   \vskip 1.5em
   }
 
+\definecolor{filled}{gray}{0.6}
+
 % Set document font
 \setmainfont{Lato}
 
@@ -32,7 +34,7 @@
 \setdefaultleftmargin{1.5em}{}{}{}{.5em}{.5em}
 
 % Make non-letter cells grey by default, to save toner
-\renewcommand\PuzzleBlackBox{\textcolor{gray}{\rule{\PuzzleUnitlength}{\PuzzleUnitlength}}}
+\renewcommand\PuzzleBlackBox{\textcolor{filled}{\rule{\PuzzleUnitlength}{\PuzzleUnitlength}}}
 
 % Eliminate page numbers
 \pagenumbering{gobble}
