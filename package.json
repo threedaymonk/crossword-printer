@@ -21,6 +21,7 @@
     "lodash": "^4.17.19",
     "node-latex": "^3.0.0",
     "pdf-to-printer": "^2.0.6",
+    "pipe-operator": "0.0.7",
     "prettier": "^2.0.5"
   },
   "devDependencies": {},
