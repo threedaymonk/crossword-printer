@@ -1,6 +1,6 @@
 {
   "name": "crossword-printer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Render crossword compiler XML",
   "main": "index.js",
   "author": "Paul Battley",
